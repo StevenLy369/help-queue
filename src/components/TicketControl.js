@@ -8,7 +8,6 @@ class TicketControl extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            formVisibleOnPage: false,
             selectedTicket: null,
             editing: false
         };
@@ -16,9 +15,18 @@ class TicketControl extends React.Component {
     }
 
     handleClick = () => {
-        this.setState(prevState => ({
-          formVisibleOnPage: !prevState.formVisibleOnPage
-        }));
+        if(this.state.selectedTicket != null) {
+            this.setState({
+                selectedTicket: null,
+                editing: false
+              });
+        } else {
+            const { dispatch } = this.props;
+            const action = {
+                type: 'TOGGLE_FORM'
+            }
+            dispatch(action);
+        }
       }
       
       handleAddingNewTicketToList = (newTicket) => {
@@ -32,7 +40,10 @@ class TicketControl extends React.Component {
           issue: issue,
         }
         dispatch(action);
-        this.setState({formVisibleOnPage: false});
+        const action2 = {
+            type: "TOGGLE_FORM"
+        }
+        dispatch(action2)
       }
 
       handleEditingTicketInList = (ticketToEdit) => {
@@ -70,12 +81,12 @@ class TicketControl extends React.Component {
     render() {
         let currentlyVisibleState = null;
         let buttonText = null;
-        if (this.state.formVisibleOnPage) {
-            currentlyVisibleState = <NewTicketForm />;
-            buttonText = 'Return to Ticket List';
-        } else {
+        if (this.props.formVisibleOnPage === null) {
             currentlyVisibleState = <TicketList />;
             buttonText = 'Add Ticket';
+        } else if(this.props.formVisibleOnPage){
+            currentlyVisibleState = <NewTicketForm />;
+            buttonText = 'Return to Ticket List'; 
         }
         return (
             <React.Fragment>
@@ -88,7 +99,8 @@ class TicketControl extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        masterTicketList : state
+        masterTicketList : state.masterTicketList,
+        formVisibleOnPage: state.formVisibleOnPage
     }
 }
 
@@ -101,3 +113,4 @@ TicketControl = connect(mapStateToProps)(TicketControl)
 
 
 export default TicketControl;
+
