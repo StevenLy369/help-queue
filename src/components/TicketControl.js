@@ -113,4 +113,3 @@ TicketControl = connect(mapStateToProps)(TicketControl)
 
 
 export default TicketControl;
-
